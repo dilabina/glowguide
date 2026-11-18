@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlowGuide - Rekomendasi Skincare & Makeup Kulit Indonesia</title>
+  <meta name="description" content="Aplikasi rekomendasi skincare dan makeup pintar untuk perempuan Indonesia berdasarkan jenis kulit, masalah kulit, dan bentuk wajah.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              200: '#fecdd3',
+              300: '#fda4af',
+              400: '#fb7185',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              800: '#9f1239',
+              900: '#881337',
+            },
+            coral: '#fb7185',
+            softbg: '#fff9f9',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-softbg min-h-screen flex flex-col text-gray-800 antialiased selection:bg-rose-200 selection:text-rose-900">
+
+  <!-- ==================== HEADER & NAVBAR ==================== -->
+  <header class="sticky top-0 z-40 glass-nav transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('beranda')">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-400 flex items-center justify-center text-white shadow-md shadow-rose-300/50">
+            <span class="text-2xl">✨</span>
+          </div>
+          <div>
+            <span class="text-2xl font-extrabold bg-gradient-to-r from-rose-600 via-pink-600 to-rose-400 bg-clip-text text-transparent tracking-tight">
+              GlowGuide
+            </span>
+            <span class="hidden sm:block text-[11px] font-semibold text-rose-500 tracking-wide uppercase">
+              Kecantikan Alami Perempuan Indonesia
+            </span>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs (Desktop) -->
+        <nav class="hidden lg:flex items-center space-x-1">
+          <button data-nav-tab="beranda" onclick="switchTab('beranda')" class="px-3.5 py-2 text-sm font-semibold rounded-xl hover:text-rose-600 transition text-rose-600 border-b-2 border-rose-500">
+            Beranda
+          </button>
+          <button data-nav-tab="kuis" onclick="switchTab('kuis')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            Kuis Kulit & Wajah
+          </button>
+          <button data-nav-tab="rekomendasi" onclick="switchTab('rekomendasi')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            Rekomendasi Personal
+          </button>
+          <button data-nav-tab="bentuk-wajah" onclick="switchTab('bentuk-wajah')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            Panduan Bentuk Wajah
+          </button>
+          <button data-nav-tab="katalog" onclick="switchTab('katalog')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            Katalog Produk
+          </button>
+          <button data-nav-tab="clash-checker" onclick="switchTab('clash-checker')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            Cek Kandungan
+          </button>
+          <button data-nav-tab="glowpedia" onclick="switchTab('glowpedia')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            GlowPedia
+          </button>
+          <button data-nav-tab="rutinitas" onclick="switchTab('rutinitas')" class="px-3.5 py-2 text-sm font-semibold rounded-xl text-gray-600 hover:text-rose-600 transition">
+            Jurnal Rutinitas
+          </button>
+        </nav>
+
+        <!-- Right Quick Actions -->
+        <div class="flex items-center gap-2">
+          <!-- Scan Wajah Quick Action Button -->
+          <button onclick="openFaceScannerDirectly()" class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-extrabold text-xs shadow-md shadow-purple-200 transition flex items-center gap-1.5">
+            <span>📷</span>
+            <span class="hidden sm:inline">Scan Wajah Langsung</span>
+          </button>
+
+          <!-- Sound Toggle -->
+          <button onclick="toggleSound()" title="Aktif/Nonaktifkan Suara" class="w-10 h-10 rounded-xl bg-white border border-rose-100 flex items-center justify-center text-gray-600 hover:text-rose-600 hover:bg-rose-50 shadow-sm transition">
+            <span id="sound-toggle-icon" class="text-sm">🔊</span>
+          </button>
+
+          <!-- Wishlist Button -->
+          <button onclick="switchTab('wishlist')" class="relative px-4 py-2 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold text-xs shadow-md shadow-rose-200 hover:shadow-lg transition flex items-center gap-1.5">
+            <span>♥ Wishlist</span>
+            <span id="nav-wishlist-count" class="hidden px-1.5 py-0.5 rounded-full bg-white text-rose-600 text-[10px] font-extrabold leading-none">
+              0
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Sub-Nav Pills -->
+      <div class="lg:hidden flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-none text-xs whitespace-nowrap">
+        <button onclick="switchTab('beranda')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Beranda</button>
+        <button onclick="switchTab('kuis')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Kuis Pintar</button>
+        <button onclick="switchTab('rekomendasi')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Rekomendasi</button>
+        <button onclick="switchTab('bentuk-wajah')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Bentuk Wajah</button>
+        <button onclick="switchTab('katalog')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Katalog</button>
+        <button onclick="switchTab('clash-checker')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Cek Kandungan</button>
+        <button onclick="switchTab('glowpedia')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">GlowPedia</button>
+        <button onclick="switchTab('rutinitas')" class="px-3 py-1.5 rounded-full bg-white border border-rose-200 text-gray-700">Jurnal</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ----------------- TAB: BERANDA (HOME) ----------------- -->
+    <section id="tab-beranda" class="tab-content active space-y-12">
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-100 via-pink-50 to-orange-50 border border-rose-200/80 p-8 sm:p-12 lg:p-16 beauty-glow">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-rose-200 text-xs font-bold text-rose-600 mb-6 shadow-sm">
+            <span>🌸</span> Panduan Kecantikan Gadis & Wanita Indonesia
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+            Temukan Rahasia <span class="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">Glow Alami</span> yang Benar-Benar Cocok Untukmu!
+          </h1>
+          <p class="mt-4 text-base sm:text-lg text-gray-600 leading-relaxed">
+            Tidak perlu lagi bingung memilih skincare atau ragu belajar makeup. GlowGuide menganalisis <strong>jenis kulit tropis</strong>, <strong>masalah kulit</strong>, dan <strong>bentuk wajahmu</strong> untuk menghadirkan rekomendasi produk lokal BPOM & Halal yang ramah kantong.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-4 items-center">
+            <button onclick="openFaceScannerDirectly()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-extrabold text-base shadow-xl shadow-rose-300 hover:scale-[1.02] transition flex items-center gap-2">
+              <span>📷</span> Scan Wajah & Aktifkan Kamera
+            </button>
+            <button onclick="switchTab('kuis')" class="px-6 py-4 rounded-2xl bg-white text-gray-800 font-bold text-base border border-rose-200 shadow-sm hover:shadow transition flex items-center gap-2">
+              <span>✦</span> Mulai Analisis Kulit & Wajah
+            </button>
+            <button onclick="switchTab('bentuk-wajah')" class="px-6 py-4 rounded-2xl bg-white/90 hover:bg-white text-gray-800 font-bold text-base border border-rose-200 shadow-sm hover:shadow transition flex items-center gap-2">
+              <span>🎨</span> Panduan Shading
+            </button>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-rose-200/60 flex flex-wrap items-center gap-6 text-xs text-gray-500 font-medium">
+            <div class="flex items-center gap-1.5">
+              <span class="text-emerald-500 text-base">✓</span> 100% Produk Terdaftar BPOM
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-teal-500 text-base">✓</span> Halal & Ramah Kantong Remaja
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-rose-500 text-base">✓</span> Formula Cocok untuk Iklim Tropis
+            </div>
+          </div>
+        </div>
+
+        <!-- Decorative Glow Blur Circles -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-rose-300/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 right-1/4 w-80 h-80 bg-pink-300/20 rounded-full blur-3xl pointer-events-none"></div>
+      </div>
+
+      <!-- 4 Fitur Unggulan GlowGuide -->
+      <div>
+        <div class="text-center max-w-2xl mx-auto mb-8">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Mengapa GlowGuide Istimewa?</h2>
+          <p class="text-sm text-gray-500 mt-2">Semua fitur dirancang khusus menjawab kebingungan perawatan kulit dan riasan bagi remaja serta pemula di Indonesia.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Card 1 -->
+          <div onclick="switchTab('kuis')" class="p-6 bg-white rounded-3xl border border-rose-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+              🧪
+            </div>
+            <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-rose-600 transition">Kuis Pintar 4 Langkah</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">Analisis jenis kulit, masalah jerawat/kusam, bentuk rahang wajah, dan batasan budget uang saku.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div onclick="switchTab('bentuk-wajah')" class="p-6 bg-white rounded-3xl border border-rose-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+              🎭
+            </div>
+            <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-purple-600 transition">Visualizer Bentuk Wajah</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">Pelajari letak shading, blush on, dan bentuk alis ideal untuk wajah bulat, oval, kotak, hati, lonjong, & diamond.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div onclick="switchTab('clash-checker')" class="p-6 bg-white rounded-3xl border border-rose-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+              🛡️
+            </div>
+            <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-amber-600 transition">Cek Benturan Kandungan</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">Cegah iritasi dan rusaknya skin barrier! Cek apakah Retinol, Vitamin C, AHA/BHA, dan Niacinamide boleh digabung.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div onclick="switchTab('rutinitas')" class="p-6 bg-white rounded-3xl border border-rose-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group">
+            <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition">
+              💧
+            </div>
+            <h3 class="font-bold text-gray-900 text-lg mb-1 group-hover:text-sky-600 transition">Jurnal Skincare & Air Minum</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">Catat rutinitas pagi & malam serta pantau konsumsi 8 gelas air putih sehari untuk menjaga hidrasi kulit.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brand Lokal Favorit Remaja Indonesia -->
+      <div class="p-8 bg-white rounded-3xl border border-rose-100 shadow-sm">
+        <div class="text-center mb-6">
+          <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Didukung Rekomendasi Brand Terpercaya</span>
+          <h3 class="text-xl font-bold text-gray-900 mt-1">Pilihan Brand Lokal & Viral Paling Dicintai</h3>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-gray-400 font-extrabold text-base sm:text-lg">
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">SOMETHINC</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">WARDAH</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">EMINA</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">SKINTIFIC</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">AVOSKIN</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">STUDIO TROPIK</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">LUXCRIME</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">DEAR ME BEAUTY</span>
+          <span class="hover:text-rose-500 transition cursor-pointer" onclick="switchTab('katalog')">THE ORIGINOTE</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------- TAB: KUIS ANALISIS KECANTIKAN ----------------- -->
+    <section id="tab-kuis" class="tab-content space-y-8">
+      <div class="max-w-3xl mx-auto bg-white rounded-3xl border border-rose-100 shadow-md p-6 sm:p-10">
+        
+        <!-- Header Progress Kuis -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between text-xs font-bold text-gray-500 mb-2">
+            <span id="quiz-step-indicator" class="text-rose-600">Langkah 1 dari 4</span>
+            <span class="text-gray-400">Analisis Personalisasi</span>
+          </div>
+          <div class="w-full bg-rose-50 h-2.5 rounded-full overflow-hidden">
+            <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full transition-all duration-300" style="width: 25%;"></div>
+          </div>
+        </div>
+
+        <!-- LANGKAH 1: JENIS KULIT -->
+        <div id="quiz-step-1" class="space-y-6">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900">Apa Jenis Kulit Wajahmu?</h3>
+            <p class="text-xs text-gray-500 mt-1">Pilih tipe kulit yang paling menggambarkan kondisi wajahmu sehari-hari.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div data-type="berminyak" onclick="selectSkinType('berminyak')" class="selectable-card card-skin-type p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-gray-900 text-sm">Berminyak (Oily)</span>
+                <span class="text-lg">✨</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Mengkilap di seluruh wajah, pori-pori besar, rentan komedo dan jerawat.</p>
+            </div>
+
+            <div data-type="kering" onclick="selectSkinType('kering')" class="selectable-card card-skin-type p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-gray-900 text-sm">Kering (Dry)</span>
+                <span class="text-lg">💧</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Terasa kaku ketarik setelah cuci muka, kusam, rentan mengelupas dan bersisik.</p>
+            </div>
+
+            <div data-type="kombinasi" onclick="selectSkinType('kombinasi')" class="selectable-card card-skin-type p-4 rounded-2xl bg-gray-50 border border-gray-200 selected">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-gray-900 text-sm">Kombinasi</span>
+                <span class="text-lg">⚖️</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Berminyak di area dahi & hidung (T-Zone), tapi normal atau kering di area pipi.</p>
+            </div>
+
+            <div data-type="sensitif" onclick="selectSkinType('sensitif')" class="selectable-card card-skin-type p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-gray-900 text-sm">Sensitif</span>
+                <span class="text-lg">🛡️</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Mudah memerah, gatal, perih bila terkena panas matahari atau kosmetik wangi.</p>
+            </div>
+
+            <div data-type="normal" onclick="selectSkinType('normal')" class="selectable-card card-skin-type p-4 rounded-2xl bg-gray-50 border border-gray-200 col-span-full sm:col-span-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-gray-900 text-sm">Normal Seimbang</span>
+                <span class="text-lg">🌸</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Kadar minyak dan air seimbang, kenyal, jarang bermasalah, makeup menempel sempurna.</p>
+            </div>
+          </div>
+
+          <!-- Panduan Cek Bagi Pemula -->
+          <div class="p-4 bg-rose-50/60 rounded-2xl border border-rose-100 text-xs text-gray-700">
+            <span class="font-bold text-rose-700">💡 Belum tahu jenis kulitmu? Lakukan Tes 30 Menit:</span>
+            <p class="mt-1">Cuci mukamu dengan facial wash lembut, lalu keringkan tanpa memakai produk apapun. Diamkan selama 30 menit di suhu ruangan. Jika seluruh wajah berminyak = Kulit Berminyak. Jika kencang ketarik = Kulit Kering. Jika hanya hidung & dahi yang berminyak = Kulit Kombinasi.</p>
+          </div>
+        </div>
+
+        <!-- LANGKAH 2: PERMASALAHAN KULIT -->
+        <div id="quiz-step-2" class="space-y-6 hidden">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900">Apa Masalah Kulit Utama yang Ingin Kamu Atasi?</h3>
+            <p class="text-xs text-gray-500 mt-1">Pilih satu atau beberapa permasalahan yang paling ingin kamu selesaikan.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div data-concern="jerawat" onclick="toggleSkinConcern('jerawat')" class="selectable-card card-skin-concern p-4 rounded-2xl bg-gray-50 border border-gray-200 selected">
+              <div class="font-bold text-gray-900 text-sm">Jerawat & Beruntusan</div>
+              <p class="text-xs text-gray-500 mt-0.5">Jerawat aktif, beruntusan kecil, benjolan kemerahan.</p>
+            </div>
+
+            <div data-concern="bekas_jerawat" onclick="toggleSkinConcern('bekas_jerawat')" class="selectable-card card-skin-concern p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="font-bold text-gray-900 text-sm">Bekas Jerawat (PIH / PIE)</div>
+              <p class="text-xs text-gray-500 mt-0.5">Noda hitam kecokelatan atau bercak kemerahan.</p>
+            </div>
+
+            <div data-concern="kusam" onclick="toggleSkinConcern('kusam')" class="selectable-card card-skin-concern p-4 rounded-2xl bg-gray-50 border border-gray-200 selected">
+              <div class="font-bold text-gray-900 text-sm">Kulit Kusam & Gelap</div>
+              <p class="text-xs text-gray-500 mt-0.5">Wajah tampak tidak bercahaya dan warna tidak merata.</p>
+            </div>
+
+            <div data-concern="pori_besar" onclick="toggleSkinConcern('pori_besar')" class="selectable-card card-skin-concern p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="font-bold text-gray-900 text-sm">Pori-pori Besar & Komedo</div>
+              <p class="text-xs text-gray-500 mt-0.5">Blackhead membandel di hidung & pori tampak terbuka.</p>
+            </div>
+
+            <div data-concern="skin_barrier" onclick="toggleSkinConcern('skin_barrier')" class="selectable-card card-skin-concern p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="font-bold text-gray-900 text-sm">Skin Barrier Rusak</div>
+              <p class="text-xs text-gray-500 mt-0.5">Kulit gampang perih, mengelupas, atau sering breakout mendadak.</p>
+            </div>
+
+            <div data-concern="minyak_berlebih" onclick="toggleSkinConcern('minyak_berlebih')" class="selectable-card card-skin-concern p-4 rounded-2xl bg-gray-50 border border-gray-200">
+              <div class="font-bold text-gray-900 text-sm">Minyak Berlebih & Kilap Cepat</div>
+              <p class="text-xs text-gray-500 mt-0.5">Wajah cepat berminyak hanya beberapa jam setelah mandi.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LANGKAH 3: BENTUK WAJAH & PEMINDAI SIMULASI -->
+        <div id="quiz-step-3" class="space-y-6 hidden">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900">Kenali Bentuk Wajahmu</h3>
+            <p class="text-xs text-gray-500 mt-1">Bentuk wajah menentukan teknik penempatan contour shading, perona pipi, dan garis alis yang paling membuat wajahmu proporsional.</p>
+          </div>
+
+          <!-- Pemindai Kamera Wajah Cerdas (Live Face Scanner) -->
+          <div class="p-6 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 rounded-3xl border border-rose-200 text-center shadow-sm">
+            <div class="max-w-lg mx-auto">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-xs font-bold text-rose-600 border border-rose-200 mb-2">
+                <span>📷</span> Fitur Pemindai Kamera Pintar Aktif
+              </div>
+              <h4 class="font-extrabold text-gray-900 text-lg">Pindai Bentuk Wajahmu Secara Langsung</h4>
+              <p class="text-xs text-gray-600 mt-1 mb-4 leading-relaxed">
+                Nyalakan kamera depan atau unggah foto selfie untuk mendeteksi proporsi rahang, dahi, dan tulang pipi secara otomatis.
+              </p>
+
+              <!-- Tombol Pilihan Input Kamera (Laptop, HP, Tablet) -->
+              <div class="flex flex-wrap items-center justify-center gap-2.5 mb-4">
+                <button id="btn-start-camera" onclick="startSmartCamera()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-xs shadow-md shadow-rose-200 hover:shadow-lg transition flex items-center gap-2">
+                  <span>🎥</span> Kamera Laptop / Webcam
+                </button>
+
+                <!-- Tombol Kamera HP / Tablet Bawaan (capture="user") -->
+                <button onclick="triggerMobileCamera()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-purple-200 hover:shadow-lg transition flex items-center gap-2">
+                  <span>📸</span> Kamera HP / Tablet (Selfie)
+                </button>
+                <input type="file" id="mobile-camera-input" accept="image/*" capture="user" onchange="handlePhotoUpload(event)" class="hidden" />
+
+                <!-- Tombol Balik Kamera (Depan/Belakang) -->
+                <button id="btn-switch-camera" onclick="toggleCameraFacing()" class="px-3.5 py-2.5 rounded-2xl bg-white border border-rose-200 text-rose-700 font-bold text-xs shadow-sm hover:bg-rose-50 transition hidden flex items-center gap-1.5" title="Ganti Kamera Depan / Belakang">
+                  <span>🔄</span> Balik Kamera
+                </button>
+
+                <!-- Unggah File Foto dari Galeri -->
+                <label class="px-4 py-2.5 rounded-2xl bg-white border border-rose-200 text-rose-600 font-bold text-xs shadow-sm hover:bg-rose-50 cursor-pointer transition flex items-center gap-2">
+                  <span>📁</span> Galeri Foto
+                  <input type="file" id="face-file-input" accept="image/*" onchange="handlePhotoUpload(event)" class="hidden" />
+                </label>
+
+                <button id="btn-stop-camera" onclick="stopLiveCamera()" class="px-4 py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition hidden">
+                  Matikan Kamera
+                </button>
+
+                <!-- Tombol Tampilkan QR Code untuk Buka di HP/Tablet -->
+                <button onclick="toggleDeviceQRModal()" class="px-3.5 py-2.5 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-bold text-xs transition flex items-center gap-1.5">
+                  <span>📱</span> Buka di HP / Tablet
+                </button>
+              </div>
+
+              <!-- Viewport Kamera & Canvas Overlay -->
+              <div id="camera-viewport-box" class="relative mx-auto w-full max-w-sm aspect-[4/3] rounded-3xl bg-gray-900 overflow-hidden border-2 border-rose-300 shadow-xl hidden">
+                <!-- Video Stream -->
+                <video id="scanner-video" playsinline autoplay muted class="w-full h-full object-cover transform -scale-x-100"></video>
+                <!-- Image Preview (jika upload file) -->
+                <img id="scanner-img-preview" alt="Preview Foto" class="w-full h-full object-cover hidden" />
+                
+                <!-- Canvas Mesh Overlay -->
+                <canvas id="scanner-mesh-canvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+                <!-- Animasi Laser Pemindai -->
+                <div id="scanner-laser" class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent shadow-[0_0_15px_#fb7185] scan-laser"></div>
+
+                <!-- HUD Status Overlay -->
+                <div class="absolute top-3 inset-x-3 flex items-center justify-between text-[11px] font-bold text-white bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                  <span id="scanner-hud-status" class="flex items-center gap-1.5 text-emerald-400">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Kamera Terhubung
+                  </span>
+                  <span id="scanner-hud-timer" class="text-rose-200">Posisikan Wajah</span>
+                </div>
+
+                <!-- Tombol Tangkap Foto saat Kamera Aktif -->
+                <div class="absolute bottom-3 inset-x-0 flex justify-center px-4">
+                  <button id="btn-capture-scan" onclick="captureAndAnalyzeFace()" class="px-6 py-2.5 rounded-full bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs shadow-lg transition flex items-center gap-2">
+                    <span>✨</span> Analisis Bentuk Wajah Sekarang
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hasil Pemindaian Analisis Wajah -->
+              <div id="camera-scan-result-card" class="mt-4 p-5 bg-white rounded-3xl border border-rose-100 shadow-md text-left hidden">
+                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">✓</span>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Pemindaian Berhasil</span>
+                  </div>
+                  <span id="detected-confidence-badge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-rose-100 text-rose-700">92% Kecocokan</span>
+                </div>
+
+                <div class="mt-3 flex items-start gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl flex-shrink-0" id="detected-shape-icon">
+                    ⚪
+                  </div>
+                  <div>
+                    <h5 id="detected-shape-title" class="text-lg font-extrabold text-gray-900">Bentuk Wajah Bulat (Round Face)</h5>
+                    <p id="detected-shape-explanation" class="text-xs text-gray-600 mt-1 leading-relaxed">
+                      Rasio panjang dan lebar wajah mendekati 1:1 dengan garis rahang melengkung lembut dan pipi penuh proporsional.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Metrik Ukuran Rasio Wajah -->
+                <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+                  <div class="p-2 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="text-[10px] text-gray-400">Rasio Panjang:Lebar</div>
+                    <div id="metric-ratio" class="text-xs font-bold text-gray-800 mt-0.5">1.08 (Seimbang)</div>
+                  </div>
+                  <div class="p-2 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="text-[10px] text-gray-400">Garis Rahang</div>
+                    <div id="metric-jaw" class="text-xs font-bold text-gray-800 mt-0.5">Melengkung Halus</div>
+                  </div>
+                  <div class="p-2 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="text-[10px] text-gray-400">Titik Terlebar</div>
+                    <div id="metric-widest" class="text-xs font-bold text-gray-800 mt-0.5">Tulang Pipi</div>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-gray-100 flex gap-2">
+                  <button onclick="applyDetectedShape()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-xs shadow-md transition text-center">
+                    Gunakan Hasil Ini & Lanjutkan Kuis
+                  </button>
+                  <button onclick="resetScannerView()" class="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition">
+                    Pindai Ulang
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Opsi Manual Bentuk Wajah -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div data-shape="bulat" onclick="selectFaceShape('bulat')" class="selectable-card card-face-shape p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-center selected">
+              <div class="w-10 h-10 rounded-full border-2 border-rose-400 mx-auto mb-2 bg-rose-50 flex items-center justify-center text-xs font-bold text-rose-600">⚪</div>
+              <div class="font-bold text-gray-900 text-xs">Bulat (Round)</div>
+              <p class="text-[10px] text-gray-500 mt-0.5">Pipi chubby, garis rahang melengkung lembut</p>
+            </div>
+
+            <div data-shape="oval" onclick="selectFaceShape('oval')" class="selectable-card card-face-shape p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-center">
+              <div class="w-9 h-11 rounded-full border-2 border-rose-400 mx-auto mb-2 bg-rose-50 flex items-center justify-center text-xs font-bold text-rose-600">🥚</div>
+              <div class="font-bold text-gray-900 text-xs">Oval</div>
+              <p class="text-[10px] text-gray-500 mt-0.5">Proporsi seimbang, sedikit lebih panjang dari lebar</p>
+            </div>
+
+            <div data-shape="kotak" onclick="selectFaceShape('kotak')" class="selectable-card card-face-shape p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-center">
+              <div class="w-10 h-10 border-2 border-rose-400 mx-auto mb-2 bg-rose-50 flex items-center justify-center text-xs font-bold text-rose-600">⏹️</div>
+              <div class="font-bold text-gray-900 text-xs">Kotak (Square)</div>
+              <p class="text-[10px] text-gray-500 mt-0.5">Rahang tegas berkarakter, sudut dahi tegas</p>
+            </div>
+
+            <div data-shape="hati" onclick="selectFaceShape('hati')" class="selectable-card card-face-shape p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-center">
+              <div class="w-10 h-10 mx-auto mb-2 flex items-center justify-center text-lg">💖</div>
+              <div class="font-bold text-gray-900 text-xs">Hati (Heart)</div>
+              <p class="text-[10px] text-gray-500 mt-0.5">Dahi lebar dengan dagu runcing tajam (V-shape)</p>
+            </div>
+
+            <div data-shape="lonjong" onclick="selectFaceShape('lonjong')" class="selectable-card card-face-shape p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-center">
+              <div class="w-8 h-12 rounded-full border-2 border-rose-400 mx-auto mb-2 bg-rose-50 flex items-center justify-center text-xs font-bold text-rose-600">⏳</div>
+              <div class="font-bold text-gray-900 text-xs">Lonjong (Oblong)</div>
+              <p class="text-[10px] text-gray-500 mt-0.5">Wajah jenjang ramping, dahi & dagu semampai</p>
+            </div>
+
+            <div data-shape="diamond" onclick="selectFaceShape('diamond')" class="selectable-card card-face-shape p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-center">
+              <div class="w-10 h-10 mx-auto mb-2 flex items-center justify-center text-lg">💎</div>
+              <div class="font-bold text-gray-900 text-xs">Berlian (Diamond)</div>
+              <p class="text-[10px] text-gray-500 mt-0.5">Tulang pipi tinggi menonjol, dahi & dagu sempit</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LANGKAH 4: PREFERENSI & BUDGET -->
+        <div id="quiz-step-4" class="space-y-6 hidden">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900">Preferensi & Batasan Budget</h3>
+            <p class="text-xs text-gray-500 mt-1">Kami ingin produk yang direkomendasikan ramah dengan kantong dan nilai prinsipmu.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Kisaran Budget Produk:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div data-tier="hemat" onclick="selectBudgetTier('hemat')" class="selectable-card card-budget-tier p-3.5 rounded-2xl bg-gray-50 border border-gray-200">
+                <div class="font-bold text-gray-900 text-xs">Kantong Pelajar / Remaja</div>
+                <div class="text-rose-600 font-extrabold text-sm mt-0.5">&lt; Rp 50.000</div>
+                <p class="text-[10px] text-gray-500 mt-1">Emina, Hanasui, The Originote, Glad2Glow</p>
+              </div>
+
+              <div data-tier="menengah" onclick="selectBudgetTier('menengah')" class="selectable-card card-budget-tier p-3.5 rounded-2xl bg-gray-50 border border-gray-200">
+                <div class="font-bold text-gray-900 text-xs">Menengah Mahasiswi</div>
+                <div class="text-rose-600 font-extrabold text-sm mt-0.5">Rp 50.000 - 150.000</div>
+                <p class="text-[10px] text-gray-500 mt-1">Somethinc, Skintific, Wardah, Studio Tropik</p>
+              </div>
+
+              <div data-tier="semua" onclick="selectBudgetTier('semua')" class="selectable-card card-budget-tier p-3.5 rounded-2xl bg-gray-50 border border-gray-200 selected">
+                <div class="font-bold text-gray-900 text-xs">Semua Rentang Harga</div>
+                <div class="text-rose-600 font-extrabold text-sm mt-0.5">Bebas & Lengkap</div>
+                <p class="text-[10px] text-gray-500 mt-1">Tampilkan seluruh pilihan terbaik yang cocok</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Preferensi Khusus:</label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div data-pref="all" onclick="selectPreference('all')" class="selectable-card card-preference p-3 rounded-2xl bg-gray-50 border border-gray-200 selected">
+                <div class="font-bold text-gray-900 text-xs">Semua Kategori</div>
+                <p class="text-[10px] text-gray-500">Semua produk resmi BPOM</p>
+              </div>
+
+              <div data-pref="teen" onclick="selectPreference('teen')" class="selectable-card card-preference p-3 rounded-2xl bg-gray-50 border border-gray-200">
+                <div class="font-bold text-gray-900 text-xs">Khusus Ramah Remaja</div>
+                <p class="text-[10px] text-gray-500">Formula ultra-lembut pemula</p>
+              </div>
+
+              <div data-pref="halal" onclick="selectPreference('halal')" class="selectable-card card-preference p-3 rounded-2xl bg-gray-50 border border-gray-200">
+                <div class="font-bold text-gray-900 text-xs">Wajib Halal Certified</div>
+                <p class="text-[10px] text-gray-500">Bersertifikasi MUI / BPJPH</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tombol Navigasi Kuis -->
+        <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
+          <button id="quiz-btn-prev" onclick="prevQuizStep()" class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-bold text-xs hover:bg-gray-50 transition" style="visibility: hidden;">
+            ← Kembali
+          </button>
+          <button id="quiz-btn-next" onclick="nextQuizStep()" class="px-7 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-sm shadow-md shadow-rose-200 hover:shadow-lg transition flex items-center gap-2">
+            <span>Lanjutkan</span> →
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ----------------- TAB: REKOMENDASI PERSONAL ----------------- -->
+    <section id="tab-rekomendasi" class="tab-content space-y-10">
+      
+      <!-- Ringkasan Hasil Profil -->
+      <div class="p-6 sm:p-8 bg-white rounded-3xl border border-rose-100 shadow-md">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">Hasil Analisis Personalisasi</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">Rangkaian Perawatan Khusus Untukmu</h2>
+            <div id="rec-profile-badges" class="mt-3"></div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="switchTab('kuis')" class="px-4 py-2.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold text-xs transition flex items-center gap-1.5">
+              <span>✏️</span> Ubah Jawaban Kuis
+            </button>
+            <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-gray-900 hover:bg-rose-600 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-sm">
+              <span>🖨️</span> Cetak Rangkuman
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rutinitas Skincare Pagi vs Malam -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Rutinitas Pagi -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200/80">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">☀️</span>
+              <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Rutinitas Pagi (Morning Routine)</h3>
+                <p class="text-xs text-amber-700">Fokus: Perlindungan, Hidrasi & Kontrol Minyak</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold bg-amber-200/70 text-amber-900 px-3 py-1 rounded-full">5 Langkah</span>
+          </div>
+
+          <div id="morning-routine-container" class="space-y-3">
+            <!-- Render via JS -->
+          </div>
+        </div>
+
+        <!-- Rutinitas Malam -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-200/80">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">🌙</span>
+              <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Rutinitas Malam (Night Routine)</h3>
+                <p class="text-xs text-purple-700">Fokus: Pembersihan Ganda & Perbaikan Sel Kulit</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold bg-purple-200/70 text-purple-900 px-3 py-1 rounded-full">5 Langkah</span>
+          </div>
+
+          <div id="night-routine-container" class="space-y-3">
+            <!-- Render via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Estimasi Biaya Rutinitas Skincare -->
+      <div class="p-6 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <div class="text-xs font-semibold text-rose-100">Estimasi Total Biaya Rutinitas Dasar (Bisa Dipakai 2-3 Bulan):</div>
+          <div id="routine-total-price" class="text-3xl font-extrabold mt-0.5">Rp 0</div>
+          <div class="text-xs text-rose-100 mt-1">Disesuaikan dengan batas budget dan formula resmi BPOM</div>
+        </div>
+        <button onclick="switchTab('katalog')" class="px-6 py-3 bg-white text-rose-600 font-bold rounded-2xl hover:bg-rose-50 transition shadow-md text-xs sm:text-sm">
+          🔍 Lihat Produk Alternatif Lainnya
+        </button>
+      </div>
+
+      <!-- Panduan Riasan Wajah Berdasarkan Bentuk Wajah -->
+      <div class="p-6 sm:p-8 bg-white rounded-3xl border border-rose-100 shadow-md space-y-6">
+        <div>
+          <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">Khusus Bentuk Wajahmu</span>
+          <h3 class="text-2xl font-bold text-gray-900 mt-1">Panduan Riasan Makeup yang Paling Menyanjung Fiturmu</h3>
+          <p class="text-xs text-gray-500 mt-1">Setiap garis rahang dan tulang pipi memiliki teknik makeup terbaiknya sendiri agar tampak memikat dan proporsional.</p>
+        </div>
+
+        <div id="face-makeup-guide-content">
+          <!-- Render via JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ----------------- TAB: PANDUAN BENTUK WAJAH & VISUALIZER ----------------- -->
+    <section id="tab-bentuk-wajah" class="tab-content space-y-8">
+      
+      <!-- Header Visualizer -->
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Visualizer Interaktif</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mt-1">Panduan Shading, Blush & Alis Berdasarkan Bentuk Wajah</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2">Pilih bentuk wajahmu dan nyalakan/matikan lapisan visualizer untuk melihat titik-titik penempatan makeup yang tepat secara visual.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-rose-100 shadow-md p-6 sm:p-8">
+        
+        <!-- Shape Selector Dropdown & Tabs -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-gray-100">
+          <div class="flex items-center gap-3 flex-wrap">
+            <label class="text-xs font-bold text-gray-700 uppercase">Pilih Bentuk Wajah:</label>
+            <select id="visualizer-shape-select" onchange="onVisualizerShapeChange(this.value)" class="px-4 py-2 bg-rose-50 border border-rose-200 rounded-xl text-sm font-bold text-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-400">
+              <option value="bulat">Wajah Bulat (Round Face)</option>
+              <option value="oval">Wajah Oval (Oval Face)</option>
+              <option value="kotak">Wajah Kotak (Square Face)</option>
+              <option value="hati">Wajah Hati (Heart Face)</option>
+              <option value="lonjong">Wajah Lonjong (Oblong Face)</option>
+              <option value="diamond">Wajah Berlian (Diamond Face)</option>
+            </select>
+            <button onclick="openFaceScannerFromVisualizer()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-xs shadow-md shadow-rose-200 hover:shadow-lg transition flex items-center gap-1.5">
+              <span>📷</span> Pindai Wajah dengan Kamera
+            </button>
+          </div>
+
+          <!-- Layer Toggles -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="toggleCanvasLayer('showContour')" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 transition">
+              🤎 Shading / Shading
+            </button>
+            <button onclick="toggleCanvasLayer('showBlush')" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
+              🌸 Blush On
+            </button>
+            <button onclick="toggleCanvasLayer('showHighlight')" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-yellow-50 hover:bg-yellow-100 text-yellow-800 border border-yellow-200 transition">
+              ✨ Highlighter
+            </button>
+            <button onclick="toggleCanvasLayer('showEyebrows')" class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition">
+              ✏️ Bentuk Alis
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Visualizer & Guide Breakdown -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Canvas Visualizer Box (5 cols) -->
+          <div class="lg:col-span-5 flex flex-col items-center justify-center p-4 bg-gradient-to-b from-rose-50/50 to-white rounded-3xl border border-rose-100">
+            <div class="relative w-full max-w-[340px] aspect-[1/1.1] flex items-center justify-center">
+              <canvas id="faceCanvas" width="380" height="420" class="w-full h-full shadow-inner"></canvas>
+            </div>
+            <div class="mt-3 text-[11px] text-gray-400 text-center font-medium">
+              Lapisan visualizer dapat diklik di atas untuk melihat zonasi terpisah.
+            </div>
+          </div>
+
+          <!-- Detailed Breakdown (7 cols) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div>
+              <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">Detail Bentuk Wajah</span>
+              <h3 id="vis-face-title" class="text-2xl font-extrabold text-gray-900 mt-0.5">Wajah Bulat</h3>
+              <p id="vis-face-desc" class="text-xs text-gray-500 mt-1">Panjang dan lebar wajah hampir seimbang, pipi tampak chubby menggemaskan.</p>
+            </div>
+
+            <div class="p-4 bg-rose-50/70 rounded-2xl border border-rose-100">
+              <span class="text-xs font-bold text-rose-800 uppercase">🎯 Tujuan Riasan (Makeup Goal):</span>
+              <p id="vis-face-goal" class="text-xs text-gray-700 mt-1 leading-relaxed">Menciptakan ilusi wajah lebih jenjang, berdimensi, dan garis rahang lebih terdefinisi tirus.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-200">
+                <span class="font-bold text-amber-700 flex items-center gap-1">🤎 Shading / Contour</span>
+                <p class="text-gray-600 mt-1">Aplikasikan di samping pelipis dan bawah tulang pipi diagonal ke arah bibir untuk ilusi ramping.</p>
+              </div>
+
+              <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-200">
+                <span class="font-bold text-rose-600 flex items-center gap-1">🌸 Blush On Placement</span>
+                <p class="text-gray-600 mt-1">Sapukan diagonal ke arah pelipis di atas tulang pipi agar memberikan efek 'lifted' terangkat.</p>
+              </div>
+
+              <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-200">
+                <span class="font-bold text-purple-700 flex items-center gap-1">✏️ Alis Penyeimbang</span>
+                <p class="text-gray-600 mt-1">Buat lengkungan tegas (High Arch) agar menyeimbangkan garis wajah yang melengkung.</p>
+              </div>
+
+              <div class="p-3.5 bg-gray-50 rounded-2xl border border-gray-200">
+                <span class="font-bold text-pink-600 flex items-center gap-1">💄 Gaya Bibir</span>
+                <p class="text-gray-600 mt-1">Ombre lips dengan gradasi gelap di dalam bibir untuk menarik fokus ke pusat wajah.</p>
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-amber-50/80 rounded-2xl border border-amber-200 text-xs text-amber-800">
+              <strong>💡 Tips Penting:</strong> <span id="vis-face-tips">Hindari blush on berbentuk lingkaran bulat persis di depan pipi.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ----------------- TAB: KATALOG PRODUK LENGKAP ----------------- -->
+    <section id="tab-katalog" class="tab-content space-y-8">
+      
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Eksplorasi Kosmetik Indonesia</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mt-1">Katalog Produk Pilihan Resmi BPOM & Halal</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2">Temukan produk skincare dan makeup terfavorit dari brand lokal Indonesia dengan harga terjangkau.</p>
+      </div>
+
+      <!-- Filter & Search Bar -->
+      <div class="p-6 bg-white rounded-3xl border border-rose-100 shadow-sm space-y-4">
+        
+        <!-- Search Input -->
+        <div class="relative">
+          <input type="text" id="catalog-search-input" placeholder="Cari nama produk, brand (Somethinc, Emina, Wardah), atau kandungan (Niacinamide, Cica)..." class="w-full pl-11 pr-4 py-3 bg-rose-50/50 border border-rose-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white transition" />
+          <span class="absolute left-4 top-3.5 text-gray-400 text-sm">🔍</span>
+        </div>
+
+        <!-- Filter Dropdowns -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <!-- Type Filter -->
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Jenis Produk:</label>
+            <select id="catalog-type-filter" onchange="applyCatalogFilters()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium">
+              <option value="semua">Semua (Skincare & Makeup)</option>
+              <option value="skincare">Khusus Skincare</option>
+              <option value="makeup">Khusus Makeup</option>
+            </select>
+          </div>
+
+          <!-- Category Filter -->
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Kategori:</label>
+            <select id="catalog-category-filter" onchange="applyCatalogFilters()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium">
+              <option value="semua">Semua Kategori</option>
+              <option value="Pembersih Wajah">Pembersih Wajah</option>
+              <option value="Double Cleansing">Double Cleansing</option>
+              <option value="Toner">Toner</option>
+              <option value="Toner Eksfoliasi">Toner Eksfoliasi</option>
+              <option value="Serum">Serum</option>
+              <option value="Pelembap">Pelembap</option>
+              <option value="Sunscreen">Sunscreen</option>
+              <option value="Cushion & Foundation">Cushion & Foundation</option>
+              <option value="Concealer">Concealer</option>
+              <option value="Bedak">Bedak</option>
+              <option value="Contour & Blush">Contour & Blush</option>
+              <option value="Mata & Alis">Mata & Alis</option>
+              <option value="Bibir">Bibir (Lip Tint/Lipstick)</option>
+              <option value="Setting Spray">Setting Spray</option>
+            </select>
+          </div>
+
+          <!-- Price Filter -->
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Kisaran Harga:</label>
+            <select id="catalog-price-filter" onchange="applyCatalogFilters()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium">
+              <option value="semua">Semua Harga</option>
+              <option value="hemat">Pelajar (&lt; Rp 50.000)</option>
+              <option value="menengah">Menengah (Rp 50rb - 150rb)</option>
+              <option value="premium">Premium (&gt; Rp 150.000)</option>
+            </select>
+          </div>
+
+          <!-- Skin Type Filter -->
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Jenis Kulit:</label>
+            <select id="catalog-skin-filter" onchange="applyCatalogFilters()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 font-medium">
+              <option value="semua">Semua Jenis Kulit</option>
+              <option value="berminyak">Berminyak</option>
+              <option value="kering">Kering</option>
+              <option value="kombinasi">Kombinasi</option>
+              <option value="sensitif">Sensitif</option>
+              <option value="normal">Normal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+          <span id="catalog-count-label">Menampilkan seluruh produk</span>
+          <button onclick="document.getElementById('catalog-search-input').value=''; document.getElementById('catalog-type-filter').value='semua'; document.getElementById('catalog-category-filter').value='semua'; document.getElementById('catalog-price-filter').value='semua'; document.getElementById('catalog-skin-filter').value='semua'; applyCatalogFilters();" class="text-rose-600 font-bold hover:underline">
+            Reset Filter
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Grid Produk -->
+      <div id="catalog-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Render via JS -->
+      </div>
+
+    </section>
+
+    <!-- ----------------- TAB: CEK BENTURAN KANDUNGAN (CLASH CHECKER) ----------------- -->
+    <section id="tab-clash-checker" class="tab-content space-y-8">
+      
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Laboratorium Kecantikan Aman</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mt-1">Pengecek Kompatibilitas Kandungan Skincare</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2">Banyak remaja mengalami iritasi atau breakout bukan karena produknya jelek, melainkan karena mencampurkan dua bahan aktif yang saling bertabrakan.</p>
+      </div>
+
+      <div class="max-w-3xl mx-auto bg-white rounded-3xl border border-rose-100 shadow-md p-6 sm:p-10 space-y-6">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Bahan 1 -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Bahan Aktif Pertama:</label>
+            <select id="clash-ing1-select" onchange="checkIngredientClash()" class="w-full p-3 bg-rose-50 border border-rose-200 rounded-2xl text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-rose-400">
+              <option value="Retinol">Retinol (Vitamin A)</option>
+              <option value="Vitamin C">Vitamin C (L-Ascorbic / Derivatif)</option>
+              <option value="AHA / BHA">AHA / BHA (Eksfoliasi Kimiawi)</option>
+              <option value="Niacinamide" selected>Niacinamide (Vitamin B3)</option>
+              <option value="Salicylic Acid (BHA)">Salicylic Acid (Asam Salisilat)</option>
+              <option value="Ceramide">Ceramide (Penguat Barrier)</option>
+              <option value="Hyaluronic Acid">Hyaluronic Acid (Penghidrasi)</option>
+              <option value="Centella Asiatica">Centella Asiatica (Cica Penenang)</option>
+            </select>
+          </div>
+
+          <!-- Bahan 2 -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Bahan Aktif Kedua:</label>
+            <select id="clash-ing2-select" onchange="checkIngredientClash()" class="w-full p-3 bg-rose-50 border border-rose-200 rounded-2xl text-sm font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-rose-400">
+              <option value="Salicylic Acid (BHA)" selected>Salicylic Acid (Asam Salisilat)</option>
+              <option value="Retinol">Retinol (Vitamin A)</option>
+              <option value="Vitamin C">Vitamin C (L-Ascorbic / Derivatif)</option>
+              <option value="AHA / BHA">AHA / BHA (Eksfoliasi Kimiawi)</option>
+              <option value="Niacinamide">Niacinamide (Vitamin B3)</option>
+              <option value="Ceramide">Ceramide (Penguat Barrier)</option>
+              <option value="Hyaluronic Acid">Hyaluronic Acid (Penghidrasi)</option>
+              <option value="Centella Asiatica">Centella Asiatica (Cica Penenang)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tombol Cek -->
+        <div class="text-center">
+          <button onclick="checkIngredientClash()" class="px-8 py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold text-sm shadow-md shadow-rose-200 hover:shadow-lg transition">
+            🔬 Analisis Kompatibilitas
+          </button>
+        </div>
+
+        <!-- Kartu Hasil Analisis -->
+        <div id="clash-result-card">
+          <!-- Render via JS -->
+        </div>
+
+        <!-- Edukasi Skin Cycling -->
+        <div class="mt-8 pt-6 border-t border-gray-100">
+          <h4 class="font-bold text-gray-900 text-base mb-3 flex items-center gap-2">
+            <span>📅</span> Panduan Skin Cycling 4 Malam (Untuk Pemula)
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="p-3 bg-rose-50 rounded-2xl border border-rose-100">
+              <div class="font-bold text-rose-700">Malam 1: Eksfoliasi</div>
+              <p class="text-gray-600 mt-1">Gunakan toner AHA/BHA untuk mengangkat sel kulit mati.</p>
+            </div>
+            <div class="p-3 bg-purple-50 rounded-2xl border border-purple-100">
+              <div class="font-bold text-purple-700">Malam 2: Retinoid</div>
+              <p class="text-gray-600 mt-1">Gunakan serum Retinol untuk memicu pembentukan kolagen baru.</p>
+            </div>
+            <div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-100">
+              <div class="font-bold text-emerald-700">Malam 3: Pemulihan</div>
+              <p class="text-gray-600 mt-1">Istirahatkan kulit. Cukup cuci muka, toner hidrasi & pelembap Ceramide.</p>
+            </div>
+            <div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-100">
+              <div class="font-bold text-emerald-700">Malam 4: Pemulihan</div>
+              <p class="text-gray-600 mt-1">Lanjutkan hidrasi penuh agar skin barrier kembali kuat dan kenyal.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ----------------- TAB: GLOWPEDIA (KAMUS KECANTIKAN) ----------------- -->
+    <section id="tab-glowpedia" class="tab-content space-y-8">
+      
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Ensiklopedia Kecantikan</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mt-1">GlowPedia: Kamus Istilah Skincare & Makeup</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2">Pahami istilah-istilah kecantikan yang sering kamu dengar di media sosial agar tidak mudah terjebak mitos.</p>
+      </div>
+
+      <div id="glowpedia-items-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Render via JS -->
+      </div>
+
+    </section>
+
+    <!-- ----------------- TAB: JURNAL RUTINITAS & AIR MINUM ----------------- -->
+    <section id="tab-rutinitas" class="tab-content space-y-8">
+      
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Kebiasaan Cantik Konsisten</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mt-1">Jurnal Rutinitas Harian & Pelacak Air Minum</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2">Kunci kulit sehat dan bercahaya bukanlah skincare mahal dalam semalam, melainkan konsistensi setiap hari.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Pelacak Air Minum (1 Col) -->
+        <div class="p-6 bg-white rounded-3xl border border-sky-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">💧</span>
+                <h3 class="font-bold text-gray-900 text-lg">Target Air Minum</h3>
+              </div>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800">2 Liter / Hari</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-6">Klik gelas di bawah setiap kali kamu selesai minum 1 gelas air (250 ml) untuk menjaga hidrasi sel kulit dari dalam.</p>
+
+            <!-- 8 Water Glasses -->
+            <div id="water-glasses-container" class="grid grid-cols-4 gap-3 justify-items-center">
+              <!-- Render via JS -->
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-gray-100 text-center">
+            <div id="water-progress-label" class="text-xs font-bold text-sky-600">0 dari 8 Gelas</div>
+          </div>
+        </div>
+
+        <!-- Checklist Rutinitas Harian (2 Cols) -->
+        <div class="lg:col-span-2 p-6 bg-white rounded-3xl border border-rose-100 shadow-sm space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">Checklist Hari Ini</span>
+              <h3 class="font-bold text-gray-900 text-xl mt-0.5">Pantauan Langkah Skincare</h3>
+            </div>
+            <div class="flex items-center gap-2 bg-rose-50 px-3.5 py-1.5 rounded-2xl border border-rose-100">
+              <span class="text-lg">🔥</span>
+              <span id="tracker-streak-count" class="text-xs font-bold text-rose-700">3 Hari Rutin</span>
+            </div>
+          </div>
+
+          <!-- Morning Checklist -->
+          <div class="p-4 bg-amber-50/50 rounded-2xl border border-amber-100 space-y-3">
+            <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+              <span>☀️</span> Rutinitas Pagi
+            </h4>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('am_cleanser')" class="w-4 h-4 rounded text-rose-600 focus:ring-rose-400">
+                <span>Cuci muka dengan pembersih lembut ber-pH seimbang</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('am_toner')" class="w-4 h-4 rounded text-rose-600 focus:ring-rose-400">
+                <span>Toner penyegar & hidrasi kulit</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('am_serum')" class="w-4 h-4 rounded text-rose-600 focus:ring-rose-400">
+                <span>Serum pencerah / penenang jerawat</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('am_moisturizer')" class="w-4 h-4 rounded text-rose-600 focus:ring-rose-400">
+                <span>Pelembap gel ringan (mengunci hidrasi)</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs font-bold text-rose-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('am_sunscreen')" class="w-4 h-4 rounded text-rose-600 focus:ring-rose-400">
+                <span>Wajib: Oleskan Sunscreen sebanyak 2 ruas jari!</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Night Checklist -->
+          <div class="p-4 bg-purple-50/50 rounded-2xl border border-purple-100 space-y-3">
+            <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+              <span>🌙</span> Rutinitas Malam
+            </h4>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 text-xs font-bold text-purple-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('pm_double')" class="w-4 h-4 rounded text-purple-600 focus:ring-purple-400">
+                <span>Double Cleansing: Angkat sisa sunscreen & debu dengan micellar water</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('pm_cleanser')" class="w-4 h-4 rounded text-purple-600 focus:ring-purple-400">
+                <span>Bilas dengan facial wash</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('pm_toner')" class="w-4 h-4 rounded text-purple-600 focus:ring-purple-400">
+                <span>Toner hidrasi / eksfoliasi lembut (2x seminggu)</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('pm_serum')" class="w-4 h-4 rounded text-purple-600 focus:ring-purple-400">
+                <span>Serum perbaikan sel kulit (Barrier Serum / Cica)</span>
+              </label>
+              <label class="flex items-center gap-3 text-xs text-gray-700 cursor-pointer">
+                <input type="checkbox" onchange="toggleRoutineCheck('pm_moisturizer')" class="w-4 h-4 rounded text-purple-600 focus:ring-purple-400">
+                <span>Pelembap malam (Barrier Repair Sleeping Cream)</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ----------------- TAB: DAFTAR KEINGINAN (WISHLIST) ----------------- -->
+    <section id="tab-wishlist" class="tab-content space-y-8">
+      
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold text-rose-500 tracking-wider uppercase">Daftar Belanja Impian</span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-gray-900 mt-1">Wishlist Produk Kecantikanmu</h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2">Daftar produk yang telah kamu tandai untuk dibeli saat gajian atau tabungan terkumpul.</p>
+      </div>
+
+      <div id="wishlist-summary-container">
+        <!-- Render Total via JS -->
+      </div>
+
+      <div id="wishlist-items-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Render via JS -->
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL DETAIL PRODUK ==================== -->
+  <div id="product-detail-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-rose-100" id="product-detail-modal-content">
+      <!-- Diisi secara dinamis oleh openProductModal() -->
+    </div>
+  </div>
+
+  <!-- ==================== MODAL BUKA DI HP / TABLET (QR CODE) ==================== -->
+  <div id="device-qr-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-rose-100">
+      <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mx-auto mb-3">
+        📱
+      </div>
+      <h3 class="text-lg font-extrabold text-gray-900">Buka GlowGuide di HP / Tablet</h3>
+      <p class="text-xs text-gray-500 mt-1 mb-4 leading-relaxed">
+        Pindai QR Code ini menggunakan kamera HP atau tablet Anda (pastikan terhubung ke Wi-Fi yang sama).
+      </p>
+
+      <div class="p-3 bg-white rounded-2xl border-2 border-rose-200 inline-block shadow-inner mx-auto mb-3">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=http://10.202.8.184:5050/%23scan" alt="QR Code HP Tablet" class="w-44 h-44 object-contain rounded-lg" />
+      </div>
+
+      <div class="p-3 bg-gray-50 rounded-2xl border border-gray-200 text-xs text-gray-700 font-mono select-all break-all mb-4">
+        http://10.202.8.184:5050/#scan
+      </div>
+
+      <button onclick="toggleDeviceQRModal()" class="w-full py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs transition">
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-white border-t border-rose-100 mt-20 pt-12 pb-16 text-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div class="md:col-span-2 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">✨</span>
+            <span class="text-xl font-extrabold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">GlowGuide Indonesia</span>
+          </div>
+          <p class="text-xs text-gray-500 leading-relaxed max-w-md">
+            GlowGuide adalah platform panduan kecantikan cerdas yang dirancang khusus untuk perempuan muda di Indonesia. Kami menjembatani kebutuhan perawatan kulit tropis dan seni riasan berkarakter dengan kurasi produk resmi BPOM serta ramah kantong.
+          </p>
+          <div class="text-[11px] text-gray-400">
+            Dibuat dengan segenap cinta untuk seluruh wanita dan gadis di Indonesia 🇮🇩
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-gray-900 text-sm mb-3">Jelajahi Fitur</h4>
+          <ul class="space-y-2 text-xs">
+            <li><button onclick="switchTab('kuis')" class="hover:text-rose-600 transition">Kuis Analisis Kulit & Wajah</button></li>
+            <li><button onclick="switchTab('rekomendasi')" class="hover:text-rose-600 transition">Rekomendasi Personal AM/PM</button></li>
+            <li><button onclick="switchTab('bentuk-wajah')" class="hover:text-rose-600 transition">Visualizer Bentuk Wajah</button></li>
+            <li><button onclick="switchTab('katalog')" class="hover:text-rose-600 transition">Katalog Produk Lokal</button></li>
+            <li><button onclick="switchTab('clash-checker')" class="hover:text-rose-600 transition">Cek Benturan Kandungan</button></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-gray-900 text-sm mb-3">Informasi & Keamanan</h4>
+          <ul class="space-y-2 text-xs">
+            <li><button onclick="switchTab('glowpedia')" class="hover:text-rose-600 transition">Kamus Kecantikan (GlowPedia)</button></li>
+            <li><button onclick="switchTab('rutinitas')" class="hover:text-rose-600 transition">Pelacak Air Minum & Rutinitas</button></li>
+            <li class="text-gray-400 text-[11px] pt-1 leading-normal">
+              Seluruh informasi produk diverifikasi berdasarkan standar BPOM RI dan kaidah dermatologi umum.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
+        <div>&copy; 2026 GlowGuide. Hak Cipta Dilindungi Undang-Undang.</div>
+        <div class="flex gap-4">
+          <span>Bersahabat • Edukatif • Resmi BPOM</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data/products.js"></script>
+  <script src="data/knowledge.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+

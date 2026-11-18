@@ -1,0 +1,187 @@
+/* GlowGuide Custom Stylesheet - Indonesian Beauty Theme */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+:root {
+  --primary-rose: #f43f5e;
+  --primary-rose-light: #ffe4e6;
+  --primary-coral: #fb7185;
+  --soft-peach: #fff1f2;
+  --glow-pink: rgba(244, 63, 94, 0.15);
+  --gold-accent: #f59e0b;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #fff8f8;
+  color: #1f2937;
+  overflow-x: hidden;
+}
+
+.font-serif-beauty {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Glassmorphism styling */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(254, 205, 211, 0.45);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(254, 205, 211, 0.5);
+}
+
+/* Glow effects */
+.beauty-glow {
+  box-shadow: 0 10px 30px -5px rgba(244, 63, 94, 0.18), 0 4px 6px -2px rgba(244, 63, 94, 0.05);
+}
+
+.beauty-glow-hover:hover {
+  box-shadow: 0 15px 35px -5px rgba(244, 63, 94, 0.28), 0 6px 12px -2px rgba(244, 63, 94, 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fff1f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #fda4af;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f43f5e;
+}
+
+/* Face Visualizer Canvas Overlay */
+#faceCanvas {
+  touch-action: none;
+  border-radius: 1.25rem;
+  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #fff1f2 100%);
+}
+
+/* Scanning Animation for Face Scanner */
+@keyframes scanSweep {
+  0% {
+    top: 0%;
+    opacity: 0.3;
+  }
+  50% {
+    top: 90%;
+    opacity: 0.9;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.3;
+  }
+}
+
+.scan-laser {
+  animation: scanSweep 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.03);
+  }
+}
+
+.pulse-ambient {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* Smooth transitions */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.35s ease-in-out;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Badge styling */
+.badge-halal {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.badge-bpom {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: white;
+}
+
+.badge-teen {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: white;
+}
+
+/* Custom Checkbox / Radio cards */
+.selectable-card {
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.selectable-card:hover {
+  border-color: #fda4af;
+  background-color: #fff1f2;
+}
+
+.selectable-card.selected {
+  border-color: #f43f5e;
+  background-color: #ffe4e6;
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.15);
+}
+
+/* Water glass tracker */
+.water-glass {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.water-glass:hover {
+  transform: scale(1.1);
+}
+.water-glass.filled {
+  color: #0284c7;
+  filter: drop-shadow(0 4px 6px rgba(2, 132, 199, 0.3));
+}
+
+/* Print styling for routine export */
+@media print {
+  header, nav, footer, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
+
